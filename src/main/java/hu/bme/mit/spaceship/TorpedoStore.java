@@ -5,46 +5,50 @@ import java.util.Random;
 /**
 * Class storing and managing the torpedoes of a ship
 *
-* (Deliberately contains bugs.)
+* (Deliberately contains bugs for testing purposes)
 */
 public class TorpedoStore {
 
-  // rate of failing to fire torpedos [0.0, 1.0]
-  private double FAILURE_RATE = 0.0; //NOSONAR
+  // RATE_OF_FAILURE to be considered for failure
+  // 0.0: never fails, 1.0: always fails
+  private double failureRate = 0.0;
 
   private int torpedoCount = 0;
+
+  // Fix #2: Mezőként újrahasznosított Random példány
+  private Random generator = new Random();
 
   public TorpedoStore(int numberOfTorpedos){
     this.torpedoCount = numberOfTorpedos;
 
     // update failure rate if it was specified in an environment variable
-    String failureEnv = System.getenv("IVT_RATE");
+    String failureEnv = System.getenv("FAILURE_RATE");
     if (failureEnv != null){
       try {
-        FAILURE_RATE = Double.parseDouble(failureEnv);
+        this.failureRate = Double.parseDouble(failureEnv);
       } catch (NumberFormatException nfe) {
-        FAILURE_RATE = 0.0;
+        this.failureRate = 0.0;
       }
     }
   }
 
   public boolean fire(int numberOfTorpedos){
     if(numberOfTorpedos < 1 || numberOfTorpedos > this.torpedoCount){
+      // Fix #1: Hiányzó throw pótolva
       throw new IllegalArgumentException("numberOfTorpedos");
     }
 
     boolean success = false;
 
-    // simulate random overheating of the launcher bay which prevents firing
-    private java.util.Random generator = new java.util.Random();
-    double r = generator.nextDouble();
+    // Fix #2: A meglévő generator mezőt használjuk
+    double r = this.generator.nextDouble();
 
-    if (r >= FAILURE_RATE) {
-      // successful firing
+    if (r >= this.failureRate) {
+      // Fix #3: Értékadás helyett kivonás (-=)
       this.torpedoCount -= numberOfTorpedos;
       success = true;
     } else {
-      // simulated failure
+      // simulate failure
       success = false;
     }
 
