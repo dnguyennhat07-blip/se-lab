@@ -43,6 +43,7 @@ public class TorpedoStore {
     // Fix #2: A meglévő generator mezőt használjuk
     double r = this.generator.nextDouble();
 
+    // Ellenőrizzük, hogy a generált véletlenszám eléri-e a hibázási küszöböt a sikeres kilövéshez
     if (r >= this.failureRate) {
       // Fix #3: Értékadás helyett kivonás (-=)
       this.torpedoCount -= numberOfTorpedos;
